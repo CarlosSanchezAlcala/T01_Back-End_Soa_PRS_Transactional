@@ -1,6 +1,8 @@
 package com.soa.canete.transaccional_allocation_soa_canete.web;
 
 import com.soa.canete.transaccional_allocation_soa_canete.domain.dto.DataTeenFuncionaryTransaccional;
+import com.soa.canete.transaccional_allocation_soa_canete.domain.dto.Transaccional.TransaccionalAllocationRequestDto;
+import com.soa.canete.transaccional_allocation_soa_canete.domain.model.TransaccionalAllocation;
 import com.soa.canete.transaccional_allocation_soa_canete.repository.TransaccionalAllocationRepository;
 import com.soa.canete.transaccional_allocation_soa_canete.service.TransaccionalAllocationService;
 import lombok.RequiredArgsConstructor;
@@ -26,6 +28,11 @@ public class TransaccionalAllocationController {
     @GetMapping("/listData")
     public Flux<DataTeenFuncionaryTransaccional> getDataCompleteTransaccional() {
         return this.transaccionalAllocationService.findAll();
+    }
+
+    @PostMapping
+    public Mono<TransaccionalAllocation> saveNewDataTransaccional(@RequestBody TransaccionalAllocationRequestDto dto) {
+        return this.transaccionalAllocationService.saveNewDataTransaccional(dto);
     }
 
 }

@@ -3,6 +3,7 @@ package com.soa.canete.transaccional_allocation_soa_canete.service.impl;
 import com.soa.canete.transaccional_allocation_soa_canete.domain.dto.DataTeenFuncionaryTransaccional;
 import com.soa.canete.transaccional_allocation_soa_canete.domain.dto.Funcionary.FuncionaryResponseDto;
 import com.soa.canete.transaccional_allocation_soa_canete.domain.dto.Teen.TeenResponseDto;
+import com.soa.canete.transaccional_allocation_soa_canete.domain.dto.Transaccional.TransaccionalAllocationRequestDto;
 import com.soa.canete.transaccional_allocation_soa_canete.domain.model.TransaccionalAllocation;
 import com.soa.canete.transaccional_allocation_soa_canete.repository.TransaccionalAllocationRepository;
 import com.soa.canete.transaccional_allocation_soa_canete.service.TransaccionalAllocationService;
@@ -13,6 +14,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+
+import static com.soa.canete.transaccional_allocation_soa_canete.domain.mapper.TransaccionalAllocationMapper.toModel;
 
 @Slf4j
 @Service
@@ -73,5 +76,10 @@ public class TransaccionalAllocationImpl implements TransaccionalAllocationServi
                 return dataTeenFuncionaryTransaccional;
             });
         });
+    }
+
+    @Override
+    public Mono<TransaccionalAllocation> saveNewDataTransaccional(TransaccionalAllocationRequestDto request) {
+        return this.transaccionalAllocationRepository.save(toModel(request));
     }
 }
