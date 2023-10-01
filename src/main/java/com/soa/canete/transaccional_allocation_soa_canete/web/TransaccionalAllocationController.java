@@ -2,10 +2,12 @@ package com.soa.canete.transaccional_allocation_soa_canete.web;
 
 import com.soa.canete.transaccional_allocation_soa_canete.domain.dto.DataTeenFuncionaryTransaccional;
 import com.soa.canete.transaccional_allocation_soa_canete.domain.dto.Transaccional.TransaccionalAllocationRequestDto;
+import com.soa.canete.transaccional_allocation_soa_canete.domain.dto.Transaccional.TransaccionalAllocationResponseDto;
 import com.soa.canete.transaccional_allocation_soa_canete.domain.model.TransaccionalAllocation;
 import com.soa.canete.transaccional_allocation_soa_canete.repository.TransaccionalAllocationRepository;
 import com.soa.canete.transaccional_allocation_soa_canete.service.TransaccionalAllocationService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -30,9 +32,15 @@ public class TransaccionalAllocationController {
         return this.transaccionalAllocationService.findAll();
     }
 
+    @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
-    public Mono<TransaccionalAllocation> saveNewDataTransaccional(@RequestBody TransaccionalAllocationRequestDto dto) {
+    public Mono<TransaccionalAllocationResponseDto> saveNewDataTransaccional(@RequestBody TransaccionalAllocationRequestDto dto) {
         return this.transaccionalAllocationService.saveNewDataTransaccional(dto);
+    }
+
+    @PutMapping("/{id_funcionaryteend}")
+    public Mono<TransaccionalAllocationResponseDto> updateDataTransaccional(@RequestBody TransaccionalAllocationRequestDto dto, @PathVariable Integer id_funcionaryteend) {
+        return this.transaccionalAllocationService.updateDataTransaction(dto, id_funcionaryteend);
     }
 
 }
