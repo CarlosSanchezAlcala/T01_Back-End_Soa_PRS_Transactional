@@ -85,16 +85,94 @@ public class TransaccionalAllocationImpl implements TransaccionalAllocationServi
     }
 
     @Override
+    public Flux<DataTeenFuncionaryTransaccional> findAllDataActive() {
+        Flux<TransaccionalAllocation> family = transaccionalAllocationRepository.findAll()
+                .sort(Comparator.comparing(TransaccionalAllocation::getId_funcionaryteend).reversed())
+                .filter((active) -> active.getEstado().equals("A"));
+        return family.flatMap(dataFamily -> {
+            Mono<FuncionaryResponseDto> funcionaryResponseDtoMono = webClientBuilder.build()
+                    .get()
+                    .uri("http://localhost:8081/api/funcionaryData/" + dataFamily.getId_funcionary())
+                    .retrieve()
+                    .bodyToMono(FuncionaryResponseDto.class);
+            Mono<TeenResponseDto> teenResponseDtoMono = webClientBuilder.build()
+                    .get()
+                    .uri("http://localhost:8082/api/teenData/" + dataFamily.getId_adolescente())
+                    .retrieve()
+                    .bodyToMono(TeenResponseDto.class);
+            return funcionaryResponseDtoMono.zipWith(teenResponseDtoMono).map(dataGeneral -> {
+                FuncionaryResponseDto legalGuardianResponseDtoData = dataGeneral.getT1();
+                TeenResponseDto adolescentResponseDtoData = dataGeneral.getT2();
+                DataTeenFuncionaryTransaccional dataTeenFuncionaryTransaccional = new DataTeenFuncionaryTransaccional();
+                dataTeenFuncionaryTransaccional.setTransaccionalAllocation(dataFamily);
+                dataTeenFuncionaryTransaccional.setTeenResponseDto(adolescentResponseDtoData);
+                dataTeenFuncionaryTransaccional.setFuncionaryResponseDto(legalGuardianResponseDtoData);
+                return dataTeenFuncionaryTransaccional;
+            });
+        });
+    }
+
+    @Override
+    public Flux<DataTeenFuncionaryTransaccional> findAllDataInactive() {
+        Flux<TransaccionalAllocation> family = transaccionalAllocationRepository.findAll()
+                .sort(Comparator.comparing(TransaccionalAllocation::getId_funcionaryteend).reversed())
+                .filter((active) -> active.getEstado().equals("I"));;
+        return family.flatMap(dataFamily -> {
+            Mono<FuncionaryResponseDto> funcionaryResponseDtoMono = webClientBuilder.build()
+                    .get()
+                    .uri("http://localhost:8081/api/funcionaryData/" + dataFamily.getId_funcionary())
+                    .retrieve()
+                    .bodyToMono(FuncionaryResponseDto.class);
+            Mono<TeenResponseDto> teenResponseDtoMono = webClientBuilder.build()
+                    .get()
+                    .uri("http://localhost:8082/api/teenData/" + dataFamily.getId_adolescente())
+                    .retrieve()
+                    .bodyToMono(TeenResponseDto.class);
+            return funcionaryResponseDtoMono.zipWith(teenResponseDtoMono).map(dataGeneral -> {
+                FuncionaryResponseDto legalGuardianResponseDtoData = dataGeneral.getT1();
+                TeenResponseDto adolescentResponseDtoData = dataGeneral.getT2();
+                DataTeenFuncionaryTransaccional dataTeenFuncionaryTransaccional = new DataTeenFuncionaryTransaccional();
+                dataTeenFuncionaryTransaccional.setTransaccionalAllocation(dataFamily);
+                dataTeenFuncionaryTransaccional.setTeenResponseDto(adolescentResponseDtoData);
+                dataTeenFuncionaryTransaccional.setFuncionaryResponseDto(legalGuardianResponseDtoData);
+                return dataTeenFuncionaryTransaccional;
+            });
+        });
+    }
+
+    @Override
     public Mono<TransaccionalAllocationResponseDto> saveNewDataTransaccional(TransaccionalAllocationRequestDto request) {
         return this.transaccionalAllocationRepository.save(toModel(request))
                 .map(TransaccionalAllocationMapper::toDto);
     }
 
     @Override
-    public Mono<TransaccionalAllocationResponseDto> updateDataTransaction(TransaccionalAllocationRequestDto request, Integer id_transaction) {
-        return this.transaccionalAllocationRepository.findById(id_transaction)
-                .switchIfEmpty(Mono.error(new ResourceNotFoundException("El identificador: " + id_transaction + " no fue encontrado")))
+    public Mono<TransaccionalAllocationResponseDto> updateDataTransaction(TransaccionalAllocationRequestDto request, Integer id_funcionaryteend) {
+        return this.transaccionalAllocationRepository.findById(id_funcionaryteend)
+                .switchIfEmpty(Mono.error(new ResourceNotFoundException("El identificador: " + id_funcionaryteend + " no fue encontrado")))
                 .flatMap((dataAsignationOrTransaction) -> this.transaccionalAllocationRepository.save(toModel(request, dataAsignationOrTransaction.getId_funcionaryteend())))
+                .map(TransaccionalAllocationMapper::toDto);
+    }
+
+    @Override
+    public Mono<TransaccionalAllocationResponseDto> deleteLogicalTransaction(Integer id_funcionaryteend) {
+        return this.transaccionalAllocationRepository.findById(id_funcionaryteend)
+                .map((deleteData) -> {
+                    deleteData.setEstado("I");
+                    return deleteData;
+                })
+                .flatMap(transaccionalAllocationRepository::save)
+                .map(TransaccionalAllocationMapper::toDto);
+    }
+
+    @Override
+    public Mono<TransaccionalAllocationResponseDto> reactiveLogicalTransaction(Integer id_funcionaryteend) {
+        return this.transaccionalAllocationRepository.findById(id_funcionaryteend)
+                .map((deleteData) -> {
+                    deleteData.setEstado("A");
+                    return deleteData;
+                })
+                .flatMap(transaccionalAllocationRepository::save)
                 .map(TransaccionalAllocationMapper::toDto);
     }
 }

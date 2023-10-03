@@ -13,6 +13,10 @@ public interface TransaccionalAllocationService {
 
     Mono<DataTeenFuncionaryTransaccional> findById(Integer id_funcionaryteend);
     Flux<DataTeenFuncionaryTransaccional> findAll();
+    Flux<DataTeenFuncionaryTransaccional> findAllDataActive();
+    Flux<DataTeenFuncionaryTransaccional> findAllDataInactive();
     Mono<TransaccionalAllocationResponseDto> saveNewDataTransaccional(TransaccionalAllocationRequestDto request);
-    Mono<TransaccionalAllocationResponseDto> updateDataTransaction(TransaccionalAllocationRequestDto request, Integer id_transaction);
+    Mono<TransaccionalAllocationResponseDto> updateDataTransaction(TransaccionalAllocationRequestDto request, Integer id_funcionaryteend);
+    Mono<TransaccionalAllocationResponseDto> deleteLogicalTransaction(Integer id_funcionaryteend);
+    Mono<TransaccionalAllocationResponseDto> reactiveLogicalTransaction(Integer id_funcionaryteend);
 }
