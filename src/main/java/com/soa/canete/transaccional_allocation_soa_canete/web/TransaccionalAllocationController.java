@@ -3,6 +3,7 @@ package com.soa.canete.transaccional_allocation_soa_canete.web;
 import com.soa.canete.transaccional_allocation_soa_canete.domain.dto.DataTeenFuncionaryTransaccional;
 import com.soa.canete.transaccional_allocation_soa_canete.domain.dto.Transaccional.TransaccionalAllocationRequestDto;
 import com.soa.canete.transaccional_allocation_soa_canete.domain.dto.Transaccional.TransaccionalAllocationResponseDto;
+import com.soa.canete.transaccional_allocation_soa_canete.domain.model.Teen;
 import com.soa.canete.transaccional_allocation_soa_canete.repository.TransaccionalAllocationRepository;
 import com.soa.canete.transaccional_allocation_soa_canete.service.TransaccionalAllocationService;
 import lombok.RequiredArgsConstructor;
@@ -29,6 +30,16 @@ public class TransaccionalAllocationController {
     @GetMapping("/listData")
     public Flux<DataTeenFuncionaryTransaccional> getDataCompleteTransaccional() {
         return this.transaccionalAllocationService.findAll();
+    }
+
+    @GetMapping("/listDataIdRegister")
+    public Flux<TransaccionalAllocationResponseDto> getDataIdExistent() {
+        return this.transaccionalAllocationService.getDataIdFuncionaryTeen();
+    }
+
+    @GetMapping("/listData/noRegisteredTeen")
+    public Flux<Teen> getDataIdNoRegistered() {
+        return this.transaccionalAllocationService.getDataTeenOnTransactional();
     }
 
     @GetMapping("/listData/active")
@@ -60,6 +71,11 @@ public class TransaccionalAllocationController {
     @PatchMapping("/reactiveLogical/{id_funcionaryteend}")
     public Mono<TransaccionalAllocationResponseDto> reactiveDataTransaccional(@PathVariable Integer id_funcionaryteend) {
         return this.transaccionalAllocationService.reactiveLogicalTransaction(id_funcionaryteend);
+    }
+
+    @DeleteMapping("/{id_funcionaryteend}")
+    public Mono<Void> deleteDataCompleteTransactional(@PathVariable Integer id_funcionaryteend) {
+        return this.transaccionalAllocationService.deleteDataCompleteTransaction(id_funcionaryteend);
     }
 
 }

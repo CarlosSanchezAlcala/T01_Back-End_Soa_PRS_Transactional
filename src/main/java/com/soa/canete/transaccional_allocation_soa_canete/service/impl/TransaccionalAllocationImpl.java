@@ -6,8 +6,10 @@ import com.soa.canete.transaccional_allocation_soa_canete.domain.dto.Teen.TeenRe
 import com.soa.canete.transaccional_allocation_soa_canete.domain.dto.Transaccional.TransaccionalAllocationRequestDto;
 import com.soa.canete.transaccional_allocation_soa_canete.domain.dto.Transaccional.TransaccionalAllocationResponseDto;
 import com.soa.canete.transaccional_allocation_soa_canete.domain.mapper.TransaccionalAllocationMapper;
+import com.soa.canete.transaccional_allocation_soa_canete.domain.model.Teen;
 import com.soa.canete.transaccional_allocation_soa_canete.domain.model.TransaccionalAllocation;
 import com.soa.canete.transaccional_allocation_soa_canete.exception.ResourceNotFoundException;
+import com.soa.canete.transaccional_allocation_soa_canete.repository.TeenAllocationRepository;
 import com.soa.canete.transaccional_allocation_soa_canete.repository.TransaccionalAllocationRepository;
 import com.soa.canete.transaccional_allocation_soa_canete.service.TransaccionalAllocationService;
 import lombok.RequiredArgsConstructor;
@@ -30,11 +32,12 @@ public class TransaccionalAllocationImpl implements TransaccionalAllocationServi
     @Autowired
     private WebClient.Builder webClientBuilder;
 
-    final TransaccionalAllocationRepository transaccionalAllocationRepository;
+    final TeenAllocationRepository _teenAllocationRepository;
+    final TransaccionalAllocationRepository _transaccionalAllocationRepository;
 
     @Override
     public Mono<DataTeenFuncionaryTransaccional> findById(Integer id_funcionaryteend) {
-        Mono<TransaccionalAllocation> family = transaccionalAllocationRepository.findById(id_funcionaryteend);
+        Mono<TransaccionalAllocation> family = _transaccionalAllocationRepository.findById(id_funcionaryteend);
         return family.flatMap(dataFamily -> {
             Mono<FuncionaryResponseDto> funcionaryResponseDtoMono = webClientBuilder.build()
                     .get()
@@ -60,7 +63,8 @@ public class TransaccionalAllocationImpl implements TransaccionalAllocationServi
 
     @Override
     public Flux<DataTeenFuncionaryTransaccional> findAll() {
-        Flux<TransaccionalAllocation> family = transaccionalAllocationRepository.findAll().sort(Comparator.comparing(TransaccionalAllocation::getId_funcionaryteend).reversed());
+        Flux<TransaccionalAllocation> family = _transaccionalAllocationRepository.findAll()
+                .sort(Comparator.comparing(TransaccionalAllocation::getId_funcionaryteend).reversed());
         return family.flatMap(dataFamily -> {
             Mono<FuncionaryResponseDto> funcionaryResponseDtoMono = webClientBuilder.build()
                     .get()
@@ -85,8 +89,28 @@ public class TransaccionalAllocationImpl implements TransaccionalAllocationServi
     }
 
     @Override
+    public Flux<TransaccionalAllocationResponseDto> getDataIdFuncionaryTeen() {
+        return this._transaccionalAllocationRepository.findAll()
+                .map(TransaccionalAllocationMapper::toDto);
+    }
+
+    @Override
+    public Flux<Teen> getDataTeenOnTransactional() {
+        return _teenAllocationRepository.findAll()
+                .collectList()
+                .flatMapMany(datas -> _transaccionalAllocationRepository.findAll()
+                        .map(TransaccionalAllocation::getId_adolescente)
+                        .collectList()
+                        .flatMapMany(ids ->
+                                Flux.fromIterable(datas)
+                                        .filter(data -> !ids.contains(data.getId_adolescente()))
+                        )
+                );
+    }
+
+    @Override
     public Flux<DataTeenFuncionaryTransaccional> findAllDataActive() {
-        Flux<TransaccionalAllocation> family = transaccionalAllocationRepository.findAll()
+        Flux<TransaccionalAllocation> family = _transaccionalAllocationRepository.findAll()
                 .sort(Comparator.comparing(TransaccionalAllocation::getId_funcionaryteend).reversed())
                 .filter((active) -> active.getEstado().equals("A"));
         return family.flatMap(dataFamily -> {
@@ -114,9 +138,10 @@ public class TransaccionalAllocationImpl implements TransaccionalAllocationServi
 
     @Override
     public Flux<DataTeenFuncionaryTransaccional> findAllDataInactive() {
-        Flux<TransaccionalAllocation> family = transaccionalAllocationRepository.findAll()
+        Flux<TransaccionalAllocation> family = _transaccionalAllocationRepository.findAll()
                 .sort(Comparator.comparing(TransaccionalAllocation::getId_funcionaryteend).reversed())
-                .filter((active) -> active.getEstado().equals("I"));;
+                .filter((active) -> active.getEstado().equals("I"));
+        ;
         return family.flatMap(dataFamily -> {
             Mono<FuncionaryResponseDto> funcionaryResponseDtoMono = webClientBuilder.build()
                     .get()
@@ -142,37 +167,42 @@ public class TransaccionalAllocationImpl implements TransaccionalAllocationServi
 
     @Override
     public Mono<TransaccionalAllocationResponseDto> saveNewDataTransaccional(TransaccionalAllocationRequestDto request) {
-        return this.transaccionalAllocationRepository.save(toModel(request))
+        return this._transaccionalAllocationRepository.save(toModel(request))
                 .map(TransaccionalAllocationMapper::toDto);
     }
 
     @Override
     public Mono<TransaccionalAllocationResponseDto> updateDataTransaction(TransaccionalAllocationRequestDto request, Integer id_funcionaryteend) {
-        return this.transaccionalAllocationRepository.findById(id_funcionaryteend)
+        return this._transaccionalAllocationRepository.findById(id_funcionaryteend)
                 .switchIfEmpty(Mono.error(new ResourceNotFoundException("El identificador: " + id_funcionaryteend + " no fue encontrado")))
-                .flatMap((dataAsignationOrTransaction) -> this.transaccionalAllocationRepository.save(toModel(request, dataAsignationOrTransaction.getId_funcionaryteend())))
+                .flatMap((dataAsignationOrTransaction) -> this._transaccionalAllocationRepository.save(toModel(request, dataAsignationOrTransaction.getId_funcionaryteend())))
                 .map(TransaccionalAllocationMapper::toDto);
     }
 
     @Override
     public Mono<TransaccionalAllocationResponseDto> deleteLogicalTransaction(Integer id_funcionaryteend) {
-        return this.transaccionalAllocationRepository.findById(id_funcionaryteend)
+        return this._transaccionalAllocationRepository.findById(id_funcionaryteend)
                 .map((deleteData) -> {
                     deleteData.setEstado("I");
                     return deleteData;
                 })
-                .flatMap(transaccionalAllocationRepository::save)
+                .flatMap(_transaccionalAllocationRepository::save)
                 .map(TransaccionalAllocationMapper::toDto);
     }
 
     @Override
     public Mono<TransaccionalAllocationResponseDto> reactiveLogicalTransaction(Integer id_funcionaryteend) {
-        return this.transaccionalAllocationRepository.findById(id_funcionaryteend)
+        return this._transaccionalAllocationRepository.findById(id_funcionaryteend)
                 .map((deleteData) -> {
                     deleteData.setEstado("A");
                     return deleteData;
                 })
-                .flatMap(transaccionalAllocationRepository::save)
+                .flatMap(_transaccionalAllocationRepository::save)
                 .map(TransaccionalAllocationMapper::toDto);
+    }
+
+    @Override
+    public Mono<Void> deleteDataCompleteTransaction(Integer id_funcionaryteend) {
+        return this._transaccionalAllocationRepository.deleteById(id_funcionaryteend);
     }
 }
