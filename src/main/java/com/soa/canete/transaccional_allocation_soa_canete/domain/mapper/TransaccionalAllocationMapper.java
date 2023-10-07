@@ -12,8 +12,8 @@ public class TransaccionalAllocationMapper {
     public static TransaccionalAllocation toModel(TransaccionalAllocationRequestDto dto) {
         return new TransaccionalAllocation(
                 dto.getDescription(),
-                dto.getEstado(),
-                dto.getId_adolescente(),
+                dto.getStatus(),
+                dto.getId_teen(),
                 dto.getId_funcionary()
         );
     }
@@ -22,8 +22,8 @@ public class TransaccionalAllocationMapper {
         return new TransaccionalAllocation(
                 id_funcionaryteend,
                 dto.getDescription(),
-                dto.getEstado(),
-                dto.getId_adolescente(),
+                dto.getStatus(),
+                dto.getId_teen(),
                 dto.getId_funcionary()
         );
     }
@@ -32,8 +32,8 @@ public class TransaccionalAllocationMapper {
         return new TransaccionalAllocationResponseDto(
                 model.getId_funcionaryteend(),
                 model.getDescription(),
-                model.getEstado(),
-                model.getId_adolescente(),
+                model.getStatus(),
+                model.getId_teen(),
                 model.getId_funcionary()
         );
     }

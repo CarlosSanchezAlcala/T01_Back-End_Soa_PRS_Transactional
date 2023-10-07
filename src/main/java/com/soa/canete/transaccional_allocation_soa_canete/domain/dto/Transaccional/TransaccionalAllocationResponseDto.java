@@ -20,9 +20,9 @@ public class TransaccionalAllocationResponseDto implements Serializable {
     @Column
     private String description;
     @Column
-    private String estado;
-    @Column("id_adolescente")
-    private Integer id_adolescente;
+    private String status;
+    @Column("id_teen")
+    private Integer id_teen;
     @Column("id_funcionary")
     private Integer id_funcionary;
 

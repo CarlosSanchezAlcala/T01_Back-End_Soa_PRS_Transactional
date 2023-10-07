@@ -10,15 +10,16 @@ import java.io.Serializable;
 @Data
 @AllArgsConstructor
 public class TransaccionalAllocationRequestDto implements Serializable {
+
     @Serial
     private static final long serialVersionUID = 8222253670338491507L;
 
     @Column
     private String description;
     @Column
-    private String estado;
-    @Column("id_adolescente")
-    private Integer id_adolescente;
+    private String status;
+    @Column("id_teen")
+    private Integer id_teen;
     @Column("id_funcionary")
     private Integer id_funcionary;
 }

@@ -7,7 +7,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
 
-@Table(name = "funcionarios_adolescente")
+@Table(name = "funcionary_teen")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -18,17 +18,16 @@ public class TransaccionalAllocation {
     @Column
     private String description;
     @Column
-    private String estado;
-    @Column("id_adolescente")
-    private Integer id_adolescente;
+    private String status;
+    @Column("id_teen")
+    private Integer id_teen;
     @Column("id_funcionary")
     private Integer id_funcionary;
 
-    public TransaccionalAllocation(String description, String estado, Integer id_adolescente, Integer id_funcionary) {
+    public TransaccionalAllocation(String description, String status, Integer id_teen, Integer id_funcionary) {
         this.description = description;
-        this.estado = estado;
-        this.id_adolescente = id_adolescente;
+        this.status = status;
+        this.id_teen = id_teen;
         this.id_funcionary = id_funcionary;
     }
-
 }

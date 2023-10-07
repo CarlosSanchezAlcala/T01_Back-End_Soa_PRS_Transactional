@@ -25,7 +25,9 @@ public class FuncionaryRequestDto implements Serializable {
     @Column
     private String phonenumber;
     @Column
-    private String rank;
+    private String range;
+    @Column
+    private String confirmation;
     @Column
     private String department;
     @Column
@@ -33,5 +35,5 @@ public class FuncionaryRequestDto implements Serializable {
     @Column
     private String email;
     @Column
-    private String estado;
+    private String status;
 }
