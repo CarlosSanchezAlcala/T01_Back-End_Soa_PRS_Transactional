@@ -141,7 +141,6 @@ public class TransaccionalAllocationImpl implements TransaccionalAllocationServi
         Flux<TransaccionalAllocation> family = _transaccionalAllocationRepository.findAll()
                 .sort(Comparator.comparing(TransaccionalAllocation::getId_funcionaryteend).reversed())
                 .filter((active) -> active.getStatus().equals("I"));
-        ;
         return family.flatMap(dataFamily -> {
             Mono<FuncionaryResponseDto> funcionaryResponseDtoMono = webClientBuilder.build()
                     .get()
