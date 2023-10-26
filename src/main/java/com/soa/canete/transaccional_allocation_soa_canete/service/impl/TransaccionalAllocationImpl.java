@@ -95,7 +95,7 @@ public class TransaccionalAllocationImpl implements TransaccionalAllocationServi
     }
 
     @Override
-    public Flux<Teen> getDataTeenOnTransactional() {
+    public Flux<Teen> getDataTeenNoRegisterTransactional() {
         return _teenAllocationRepository.findAll()
                 .collectList()
                 .flatMapMany(datas -> _transaccionalAllocationRepository.findAll()

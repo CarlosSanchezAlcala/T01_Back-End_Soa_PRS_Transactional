@@ -39,7 +39,7 @@ public class TransaccionalAllocationController {
 
     @GetMapping("/listData/noRegisteredTeen")
     public Flux<Teen> getDataIdNoRegistered() {
-        return this.transaccionalAllocationService.getDataTeenOnTransactional();
+        return this.transaccionalAllocationService.getDataTeenNoRegisterTransactional();
     }
 
     @GetMapping("/listData/active")
@@ -48,7 +48,7 @@ public class TransaccionalAllocationController {
     }
 
     @GetMapping("/listData/inactive")
-    public Flux<DataTeenFuncionaryTransaccional> getDataInativeAsignation() {
+    public Flux<DataTeenFuncionaryTransaccional> getDataInactiveAsignation() {
         return this.transaccionalAllocationService.findAllDataInactive();
     }
 
