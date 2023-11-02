@@ -19,24 +19,24 @@ public class FuncionaryResponseDto implements Serializable {
     private Integer id_funcionary;
     @Column
     private String name;
-    @Column
-    private String surnamefather;
-    @Column
-    private String surnamemother;
+    @Column("surnamefather")
+    private String surnameFather;
+    @Column("surnamemother")
+    private String surnameMother;
     @Column
     private String dni;
-    @Column
-    private String phonenumber;
+    @Column("phonenumber")
+    private String phoneNumber;
     @Column
     private String range;
     @Column
     private String confirmation;
     @Column
-    private String department;
-    @Column
     private String address;
     @Column
     private String email;
+    @Column
+    private String codubi;
     @Column
     private String status;
 }
