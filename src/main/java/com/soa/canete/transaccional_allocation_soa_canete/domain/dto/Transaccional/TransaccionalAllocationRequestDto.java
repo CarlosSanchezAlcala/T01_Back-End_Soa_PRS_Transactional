@@ -1,6 +1,7 @@
 package com.soa.canete.transaccional_allocation_soa_canete.domain.dto.Transaccional;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import org.springframework.data.relational.core.mapping.Column;
 
@@ -9,6 +10,7 @@ import java.io.Serializable;
 
 @Data
 @AllArgsConstructor
+@Builder
 public class TransaccionalAllocationRequestDto implements Serializable {
 
     @Serial

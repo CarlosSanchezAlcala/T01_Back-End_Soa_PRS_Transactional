@@ -2,6 +2,7 @@ package com.soa.canete.transaccional_allocation_soa_canete.service.impl;
 
 import com.soa.canete.transaccional_allocation_soa_canete.domain.dto.DataTeenFuncionaryTransaccional;
 import com.soa.canete.transaccional_allocation_soa_canete.domain.dto.Funcionary.FuncionaryResponseDto;
+import com.soa.canete.transaccional_allocation_soa_canete.domain.dto.Teen.MasivTeen;
 import com.soa.canete.transaccional_allocation_soa_canete.domain.dto.Teen.TeenResponseDto;
 import com.soa.canete.transaccional_allocation_soa_canete.domain.dto.Transaccional.TransaccionalAllocationRequestDto;
 import com.soa.canete.transaccional_allocation_soa_canete.domain.dto.Transaccional.TransaccionalAllocationResponseDto;
@@ -21,6 +22,8 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.util.Comparator;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.soa.canete.transaccional_allocation_soa_canete.domain.mapper.TransaccionalAllocationMapper.toModel;
 
@@ -104,6 +107,7 @@ public class TransaccionalAllocationImpl implements TransaccionalAllocationServi
                         .flatMapMany(ids ->
                                 Flux.fromIterable(datas)
                                         .filter(data -> !ids.contains(data.getId_teen()))
+                                        .filter(data -> "A".equals(data.getStatus()))
                         )
                 );
     }
@@ -203,5 +207,21 @@ public class TransaccionalAllocationImpl implements TransaccionalAllocationServi
     @Override
     public Mono<Void> deleteDataCompleteTransaction(Integer id_funcionaryteend) {
         return this._transaccionalAllocationRepository.deleteById(id_funcionaryteend);
+    }
+
+    @Override
+    public Mono<Void> updateTeenBulk(MasivTeen dto) {
+        List<Mono<TransaccionalAllocationResponseDto>> masiv = dto.getTeens().stream()
+                .map((res) -> {
+                    TransaccionalAllocationRequestDto transac = TransaccionalAllocationRequestDto.builder()
+                            .id_teen(res.getId_teen())
+                            .description(dto.getDescription())
+                            .id_funcionary(dto.getId_funcionary())
+                            .status("A")
+                            .build();
+                    System.out.println("Valor de transac: " + transac.toString());
+                    return saveNewDataTransaccional(transac);
+                }).collect(Collectors.toList());
+        return Flux.merge(masiv).then(Mono.empty());
     }
 }

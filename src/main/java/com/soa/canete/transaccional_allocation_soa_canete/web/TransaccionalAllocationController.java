@@ -1,6 +1,7 @@
 package com.soa.canete.transaccional_allocation_soa_canete.web;
 
 import com.soa.canete.transaccional_allocation_soa_canete.domain.dto.DataTeenFuncionaryTransaccional;
+import com.soa.canete.transaccional_allocation_soa_canete.domain.dto.Teen.MasivTeen;
 import com.soa.canete.transaccional_allocation_soa_canete.domain.dto.Transaccional.TransaccionalAllocationRequestDto;
 import com.soa.canete.transaccional_allocation_soa_canete.domain.dto.Transaccional.TransaccionalAllocationResponseDto;
 import com.soa.canete.transaccional_allocation_soa_canete.domain.model.Teen;
@@ -35,6 +36,11 @@ public class TransaccionalAllocationController {
     @GetMapping("/listDataIdRegister")
     public Flux<TransaccionalAllocationResponseDto> getDataIdExistent() {
         return this.transaccionalAllocationService.getDataIdFuncionaryTeen();
+    }
+
+    @PostMapping("/bulk")
+    public Mono<Void> updateTeenBulk(@RequestBody MasivTeen dto) {
+        return this.transaccionalAllocationService.updateTeenBulk(dto);
     }
 
     @GetMapping("/listData/noRegisteredTeen")
