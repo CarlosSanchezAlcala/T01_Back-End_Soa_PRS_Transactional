@@ -33,6 +33,14 @@ import static com.soa.canete.transaccional_allocation_soa_canete.domain.mapper.T
 public class TransaccionalAllocationImpl implements TransaccionalAllocationService {
 
     @Autowired
+    public TransaccionalAllocationImpl(TransaccionalAllocationRepository transaccionalAllocationRepository,
+                                       TeenAllocationRepository teenAllocationRepository,
+                                       WebClient.Builder webClientBuilder) {
+        this._transaccionalAllocationRepository = transaccionalAllocationRepository;
+        this._teenAllocationRepository = teenAllocationRepository;
+        this.webClientBuilder = webClientBuilder;
+    }
+
     private WebClient.Builder webClientBuilder;
 
     final TeenAllocationRepository _teenAllocationRepository;
@@ -89,6 +97,12 @@ public class TransaccionalAllocationImpl implements TransaccionalAllocationServi
                 return dataTeenFuncionaryTransaccional;
             });
         });
+    }
+
+    @Override
+    public Mono<TransaccionalAllocationResponseDto> findByIdTeen(Integer id_teen) {
+        return this._transaccionalAllocationRepository.findById(id_teen)
+                .map(TransaccionalAllocationMapper::toDto);
     }
 
     @Override

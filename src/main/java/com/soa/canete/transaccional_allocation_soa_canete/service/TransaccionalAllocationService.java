@@ -14,6 +14,7 @@ public interface TransaccionalAllocationService {
 
     Mono<DataTeenFuncionaryTransaccional> findById(Integer id_funcionaryteend);
     Flux<DataTeenFuncionaryTransaccional> findAll();
+    Mono<TransaccionalAllocationResponseDto> findByIdTeen(Integer id_teen);
     Flux<TransaccionalAllocationResponseDto> getDataIdFuncionaryTeen();
     Flux<Teen> getDataTeenNoRegisterTransactional();
     Flux<DataTeenFuncionaryTransaccional> findAllDataActive();

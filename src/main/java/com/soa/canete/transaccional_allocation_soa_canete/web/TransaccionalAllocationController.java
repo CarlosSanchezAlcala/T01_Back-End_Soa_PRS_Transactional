@@ -8,6 +8,7 @@ import com.soa.canete.transaccional_allocation_soa_canete.domain.model.Teen;
 import com.soa.canete.transaccional_allocation_soa_canete.repository.TransaccionalAllocationRepository;
 import com.soa.canete.transaccional_allocation_soa_canete.service.TransaccionalAllocationService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
@@ -20,7 +21,6 @@ import reactor.core.publisher.Mono;
 public class TransaccionalAllocationController {
 
     final TransaccionalAllocationRepository transaccionalAllocationRepository;
-
     final TransaccionalAllocationService transaccionalAllocationService;
 
     @GetMapping("/{idFamilyData}")
@@ -36,6 +36,11 @@ public class TransaccionalAllocationController {
     @GetMapping("/listDataIdRegister")
     public Flux<TransaccionalAllocationResponseDto> getDataIdExistent() {
         return this.transaccionalAllocationService.getDataIdFuncionaryTeen();
+    }
+
+    @GetMapping("listData/idTeen/{id_teen}")
+    public Mono<TransaccionalAllocationResponseDto> getDataForIdTeen(@PathVariable Integer id_teen) {
+        return this.transaccionalAllocationService.findByIdTeen(id_teen);
     }
 
     @PostMapping("/bulk")
