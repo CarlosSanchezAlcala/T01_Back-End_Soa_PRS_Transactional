@@ -13,15 +13,28 @@ import reactor.core.publisher.Mono;
 public interface TransaccionalAllocationService {
 
     Mono<DataTeenFuncionaryTransaccional> findById(Integer id_funcionaryteend);
+
     Flux<DataTeenFuncionaryTransaccional> findAll();
+
+    Mono<TransaccionalAllocationResponseDto> findByIdTeen(Integer id_teen);
+
     Flux<TransaccionalAllocationResponseDto> getDataIdFuncionaryTeen();
+
     Flux<Teen> getDataTeenNoRegisterTransactional();
+
     Flux<DataTeenFuncionaryTransaccional> findAllDataActive();
+
     Flux<DataTeenFuncionaryTransaccional> findAllDataInactive();
+
     Mono<TransaccionalAllocationResponseDto> saveNewDataTransaccional(TransaccionalAllocationRequestDto request);
+
     Mono<TransaccionalAllocationResponseDto> updateDataTransaction(TransaccionalAllocationRequestDto request, Integer id_funcionaryteend);
+
     Mono<TransaccionalAllocationResponseDto> deleteLogicalTransaction(Integer id_funcionaryteend);
+
     Mono<TransaccionalAllocationResponseDto> reactiveLogicalTransaction(Integer id_funcionaryteend);
+
     Mono<Void> deleteDataCompleteTransaction(Integer id_funcionaryteend);
+
     Mono<Void> updateTeenBulk(MasivTeen dto);
 }

@@ -29,8 +29,8 @@ public class TransaccionalAllocationResponseDto implements Serializable {
     @Column
     private LocalDate function_start;
     @Column("id_teen")
-    private Integer id_teen;
-    @Column("id_funcionary")
+    private Integer idTeen;
+    @Column
     private Integer id_funcionary;
 
 }

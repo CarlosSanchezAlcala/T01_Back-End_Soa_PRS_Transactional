@@ -28,8 +28,8 @@ public class TransaccionalAllocation {
     @Column
     private LocalDate function_start;
     @Column("id_teen")
-    private Integer id_teen;
-    @Column("id_funcionary")
+    private Integer idTeen;
+    @Column
     private Integer id_funcionary;
 
     public TransaccionalAllocation(String description, String status, Integer id_teen, Integer id_funcionary, LocalDateTime date_hour_register, LocalDate function_start) {

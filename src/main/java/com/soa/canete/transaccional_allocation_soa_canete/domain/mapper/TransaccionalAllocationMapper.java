@@ -40,7 +40,7 @@ public class TransaccionalAllocationMapper {
                 model.getStatus(),
                 model.getDate_hour_register(),
                 model.getFunction_start(),
-                model.getId_teen(),
+                model.getIdTeen(),
                 model.getId_funcionary()
         );
     }

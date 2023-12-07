@@ -33,6 +33,14 @@ import static com.soa.canete.transaccional_allocation_soa_canete.domain.mapper.T
 public class TransaccionalAllocationImpl implements TransaccionalAllocationService {
 
     @Autowired
+    public TransaccionalAllocationImpl(TransaccionalAllocationRepository transaccionalAllocationRepository,
+                                       TeenAllocationRepository teenAllocationRepository,
+                                       WebClient.Builder webClientBuilder) {
+        this._transaccionalAllocationRepository = transaccionalAllocationRepository;
+        this._teenAllocationRepository = teenAllocationRepository;
+        this.webClientBuilder = webClientBuilder;
+    }
+
     private WebClient.Builder webClientBuilder;
 
     final TeenAllocationRepository _teenAllocationRepository;
@@ -49,7 +57,7 @@ public class TransaccionalAllocationImpl implements TransaccionalAllocationServi
                     .bodyToMono(FuncionaryResponseDto.class);
             Mono<TeenResponseDto> teenResponseDtoMono = webClientBuilder.build()
                     .get()
-                    .uri("http://localhost:8082/api/teenData/" + dataFamily.getId_teen())
+                    .uri("http://localhost:8082/api/teenData/" + dataFamily.getIdTeen())
                     .retrieve()
                     .bodyToMono(TeenResponseDto.class);
             return funcionaryResponseDtoMono.zipWith(teenResponseDtoMono).map(dataGeneral -> {
@@ -76,7 +84,7 @@ public class TransaccionalAllocationImpl implements TransaccionalAllocationServi
                     .bodyToMono(FuncionaryResponseDto.class);
             Mono<TeenResponseDto> teenResponseDtoMono = webClientBuilder.build()
                     .get()
-                    .uri("http://localhost:8082/api/teenData/" + dataFamily.getId_teen())
+                    .uri("http://localhost:8082/api/teenData/" + dataFamily.getIdTeen())
                     .retrieve()
                     .bodyToMono(TeenResponseDto.class);
             return funcionaryResponseDtoMono.zipWith(teenResponseDtoMono).map(dataGeneral -> {
@@ -92,6 +100,12 @@ public class TransaccionalAllocationImpl implements TransaccionalAllocationServi
     }
 
     @Override
+    public Mono<TransaccionalAllocationResponseDto> findByIdTeen(Integer id_teen) {
+        return this._transaccionalAllocationRepository.findByIdTeen(id_teen)
+                .map(TransaccionalAllocationMapper::toDto);
+    }
+
+    @Override
     public Flux<TransaccionalAllocationResponseDto> getDataIdFuncionaryTeen() {
         return this._transaccionalAllocationRepository.findAll()
                 .map(TransaccionalAllocationMapper::toDto);
@@ -102,7 +116,7 @@ public class TransaccionalAllocationImpl implements TransaccionalAllocationServi
         return _teenAllocationRepository.findAll()
                 .collectList()
                 .flatMapMany(datas -> _transaccionalAllocationRepository.findAll()
-                        .map(TransaccionalAllocation::getId_teen)
+                        .map(TransaccionalAllocation::getIdTeen)
                         .collectList()
                         .flatMapMany(ids ->
                                 Flux.fromIterable(datas)
@@ -125,7 +139,7 @@ public class TransaccionalAllocationImpl implements TransaccionalAllocationServi
                     .bodyToMono(FuncionaryResponseDto.class);
             Mono<TeenResponseDto> teenResponseDtoMono = webClientBuilder.build()
                     .get()
-                    .uri("http://localhost:8082/api/teenData/" + dataFamily.getId_teen())
+                    .uri("http://localhost:8082/api/teenData/" + dataFamily.getIdTeen())
                     .retrieve()
                     .bodyToMono(TeenResponseDto.class);
             return funcionaryResponseDtoMono.zipWith(teenResponseDtoMono).map(dataGeneral -> {
@@ -153,7 +167,7 @@ public class TransaccionalAllocationImpl implements TransaccionalAllocationServi
                     .bodyToMono(FuncionaryResponseDto.class);
             Mono<TeenResponseDto> teenResponseDtoMono = webClientBuilder.build()
                     .get()
-                    .uri("http://localhost:8082/api/teenData/" + dataFamily.getId_teen())
+                    .uri("http://localhost:8082/api/teenData/" + dataFamily.getIdTeen())
                     .retrieve()
                     .bodyToMono(TeenResponseDto.class);
             return funcionaryResponseDtoMono.zipWith(teenResponseDtoMono).map(dataGeneral -> {
