@@ -20,8 +20,8 @@ public class TransaccionalAllocationRequestDto implements Serializable {
     private String description;
     @Column
     private String status;
-    @Column("id_teen")
+    @Column
     private Integer id_teen;
-    @Column("id_funcionary")
+    @Column
     private Integer id_funcionary;
 }

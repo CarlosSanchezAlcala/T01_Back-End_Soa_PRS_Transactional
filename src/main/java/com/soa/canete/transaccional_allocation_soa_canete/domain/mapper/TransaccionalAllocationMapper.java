@@ -33,7 +33,7 @@ public class TransaccionalAllocationMapper {
                 model.getId_funcionaryteend(),
                 model.getDescription(),
                 model.getStatus(),
-                model.getId_teen(),
+                model.getIdTeen(),
                 model.getId_funcionary()
         );
     }

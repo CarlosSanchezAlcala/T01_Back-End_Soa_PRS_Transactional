@@ -57,7 +57,7 @@ public class TransaccionalAllocationImpl implements TransaccionalAllocationServi
                     .bodyToMono(FuncionaryResponseDto.class);
             Mono<TeenResponseDto> teenResponseDtoMono = webClientBuilder.build()
                     .get()
-                    .uri("http://localhost:8082/api/teenData/" + dataFamily.getId_teen())
+                    .uri("http://localhost:8082/api/teenData/" + dataFamily.getIdTeen())
                     .retrieve()
                     .bodyToMono(TeenResponseDto.class);
             return funcionaryResponseDtoMono.zipWith(teenResponseDtoMono).map(dataGeneral -> {
@@ -84,7 +84,7 @@ public class TransaccionalAllocationImpl implements TransaccionalAllocationServi
                     .bodyToMono(FuncionaryResponseDto.class);
             Mono<TeenResponseDto> teenResponseDtoMono = webClientBuilder.build()
                     .get()
-                    .uri("http://localhost:8082/api/teenData/" + dataFamily.getId_teen())
+                    .uri("http://localhost:8082/api/teenData/" + dataFamily.getIdTeen())
                     .retrieve()
                     .bodyToMono(TeenResponseDto.class);
             return funcionaryResponseDtoMono.zipWith(teenResponseDtoMono).map(dataGeneral -> {
@@ -101,7 +101,7 @@ public class TransaccionalAllocationImpl implements TransaccionalAllocationServi
 
     @Override
     public Mono<TransaccionalAllocationResponseDto> findByIdTeen(Integer id_teen) {
-        return this._transaccionalAllocationRepository.findById(id_teen)
+        return this._transaccionalAllocationRepository.findByIdTeen(id_teen)
                 .map(TransaccionalAllocationMapper::toDto);
     }
 
@@ -116,7 +116,7 @@ public class TransaccionalAllocationImpl implements TransaccionalAllocationServi
         return _teenAllocationRepository.findAll()
                 .collectList()
                 .flatMapMany(datas -> _transaccionalAllocationRepository.findAll()
-                        .map(TransaccionalAllocation::getId_teen)
+                        .map(TransaccionalAllocation::getIdTeen)
                         .collectList()
                         .flatMapMany(ids ->
                                 Flux.fromIterable(datas)
@@ -139,7 +139,7 @@ public class TransaccionalAllocationImpl implements TransaccionalAllocationServi
                     .bodyToMono(FuncionaryResponseDto.class);
             Mono<TeenResponseDto> teenResponseDtoMono = webClientBuilder.build()
                     .get()
-                    .uri("http://localhost:8082/api/teenData/" + dataFamily.getId_teen())
+                    .uri("http://localhost:8082/api/teenData/" + dataFamily.getIdTeen())
                     .retrieve()
                     .bodyToMono(TeenResponseDto.class);
             return funcionaryResponseDtoMono.zipWith(teenResponseDtoMono).map(dataGeneral -> {
@@ -167,7 +167,7 @@ public class TransaccionalAllocationImpl implements TransaccionalAllocationServi
                     .bodyToMono(FuncionaryResponseDto.class);
             Mono<TeenResponseDto> teenResponseDtoMono = webClientBuilder.build()
                     .get()
-                    .uri("http://localhost:8082/api/teenData/" + dataFamily.getId_teen())
+                    .uri("http://localhost:8082/api/teenData/" + dataFamily.getIdTeen())
                     .retrieve()
                     .bodyToMono(TeenResponseDto.class);
             return funcionaryResponseDtoMono.zipWith(teenResponseDtoMono).map(dataGeneral -> {

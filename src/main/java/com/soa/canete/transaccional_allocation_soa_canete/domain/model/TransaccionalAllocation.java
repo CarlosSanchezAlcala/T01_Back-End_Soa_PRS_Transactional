@@ -20,14 +20,14 @@ public class TransaccionalAllocation {
     @Column
     private String status;
     @Column("id_teen")
-    private Integer id_teen;
-    @Column("id_funcionary")
+    private Integer idTeen;
+    @Column
     private Integer id_funcionary;
 
-    public TransaccionalAllocation(String description, String status, Integer id_teen, Integer id_funcionary) {
+    public TransaccionalAllocation(String description, String status, Integer idTeen, Integer id_funcionary) {
         this.description = description;
         this.status = status;
-        this.id_teen = id_teen;
+        this.idTeen = idTeen;
         this.id_funcionary = id_funcionary;
     }
 }
