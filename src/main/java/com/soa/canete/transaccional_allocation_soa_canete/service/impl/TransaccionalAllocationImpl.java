@@ -231,9 +231,9 @@ public class TransaccionalAllocationImpl implements TransaccionalAllocationServi
                             .id_teen(res.getId_teen())
                             .description(dto.getDescription())
                             .id_funcionary(dto.getId_funcionary())
+                            .function_start(dto.getFunction_start())
                             .status("A")
                             .build();
-                    System.out.println("Valor de transac: " + transac.toString());
                     return saveNewDataTransaccional(transac);
                 }).collect(Collectors.toList());
         return Flux.merge(masiv).then(Mono.empty());

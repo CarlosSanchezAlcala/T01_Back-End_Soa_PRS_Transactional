@@ -7,6 +7,9 @@ import org.springframework.data.relational.core.mapping.Column;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.sql.Date;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Data
 @AllArgsConstructor
@@ -22,7 +25,11 @@ public class TransaccionalAllocationResponseDto implements Serializable {
     @Column
     private String status;
     @Column
-    private Integer id_teen;
+    private LocalDateTime date_hour_register;
+    @Column
+    private LocalDate function_start;
+    @Column("id_teen")
+    private Integer idTeen;
     @Column
     private Integer id_funcionary;
 
