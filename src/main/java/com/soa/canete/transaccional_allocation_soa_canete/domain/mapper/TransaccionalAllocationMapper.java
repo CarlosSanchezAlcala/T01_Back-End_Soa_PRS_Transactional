@@ -14,7 +14,10 @@ public class TransaccionalAllocationMapper {
                 dto.getDescription(),
                 dto.getStatus(),
                 dto.getId_teen(),
-                dto.getId_funcionary()
+                dto.getId_funcionary(),
+                dto.getDate_hour_register(),
+                dto.getFunction_start()
+
         );
     }
 
@@ -23,6 +26,8 @@ public class TransaccionalAllocationMapper {
                 id_funcionaryteend,
                 dto.getDescription(),
                 dto.getStatus(),
+                dto.getDate_hour_register(),
+                dto.getFunction_start(),
                 dto.getId_teen(),
                 dto.getId_funcionary()
         );
@@ -33,6 +38,8 @@ public class TransaccionalAllocationMapper {
                 model.getId_funcionaryteend(),
                 model.getDescription(),
                 model.getStatus(),
+                model.getDate_hour_register(),
+                model.getFunction_start(),
                 model.getId_teen(),
                 model.getId_funcionary()
         );

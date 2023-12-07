@@ -5,6 +5,9 @@ import lombok.Setter;
 import lombok.ToString;
 import org.springframework.data.relational.core.mapping.Column;
 
+import java.sql.Date;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
@@ -15,9 +18,11 @@ public class MasivTeen {
     private Integer id_funcionary;
     @Column
     private String description;
+
+    @Column
+    private LocalDate function_start;
     @Column
     private List<TeenAssignDto> teens;
-
     @Getter
     @Setter
     public static class TeenAssignDto {
