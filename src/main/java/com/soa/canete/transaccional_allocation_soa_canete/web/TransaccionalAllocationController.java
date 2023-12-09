@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.util.UUID;
+
 @RestController
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 @RequestMapping("/api/transaccionalData")
@@ -74,9 +76,9 @@ public class TransaccionalAllocationController {
         return this.transaccionalAllocationService.updateDataTransaction(dto, id_funcionaryteend);
     }
 
-    @PatchMapping("/deleteLogical/{id_funcionaryteend}")
-    public Mono<TransaccionalAllocationResponseDto> deleteDataTransaccional(@PathVariable Integer id_funcionaryteend) {
-        return this.transaccionalAllocationService.deleteLogicalTransaction(id_funcionaryteend);
+    @PatchMapping("/deleteLogical/{idTeen}")
+    public Mono<TransaccionalAllocationResponseDto> deleteDataTransaccional(@PathVariable Integer idTeen) {
+        return this.transaccionalAllocationService.deleteLogicalTransaction(idTeen);
     }
 
     @PatchMapping("/reactiveLogical/{id_funcionaryteend}")

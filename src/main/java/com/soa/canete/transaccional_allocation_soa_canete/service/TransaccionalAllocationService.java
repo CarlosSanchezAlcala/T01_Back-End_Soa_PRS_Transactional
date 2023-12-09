@@ -9,6 +9,8 @@ import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.util.UUID;
+
 @Service
 public interface TransaccionalAllocationService {
 
@@ -30,7 +32,7 @@ public interface TransaccionalAllocationService {
 
     Mono<TransaccionalAllocationResponseDto> updateDataTransaction(TransaccionalAllocationRequestDto request, Integer id_funcionaryteend);
 
-    Mono<TransaccionalAllocationResponseDto> deleteLogicalTransaction(Integer id_funcionaryteend);
+    Mono<TransaccionalAllocationResponseDto> deleteLogicalTransaction(Integer idTeen);
 
     Mono<TransaccionalAllocationResponseDto> reactiveLogicalTransaction(Integer id_funcionaryteend);
 

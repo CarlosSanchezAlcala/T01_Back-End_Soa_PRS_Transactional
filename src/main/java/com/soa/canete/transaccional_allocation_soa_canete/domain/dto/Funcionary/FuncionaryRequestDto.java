@@ -35,5 +35,7 @@ public class FuncionaryRequestDto implements Serializable {
     @Column
     private String codubi;
     @Column
+    private Integer id_operativeunit;
+    @Column
     private String status;
 }

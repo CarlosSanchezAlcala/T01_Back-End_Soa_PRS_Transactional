@@ -13,7 +13,7 @@ public class TransaccionalAllocationMapper {
         return new TransaccionalAllocation(
                 dto.getDescription(),
                 dto.getStatus(),
-                dto.getId_teen(),
+                dto.getIdTeen(),
                 dto.getId_funcionary(),
                 dto.getDate_hour_register(),
                 dto.getFunction_start()
@@ -28,7 +28,7 @@ public class TransaccionalAllocationMapper {
                 dto.getStatus(),
                 dto.getDate_hour_register(),
                 dto.getFunction_start(),
-                dto.getId_teen(),
+                dto.getIdTeen(),
                 dto.getId_funcionary()
         );
     }

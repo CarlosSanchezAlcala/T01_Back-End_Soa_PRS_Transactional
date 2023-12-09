@@ -8,16 +8,20 @@ import org.springframework.data.relational.core.mapping.Column;
 import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Data
 @AllArgsConstructor
-public class TeenResponseDto  implements Serializable {
+public class TeenResponseDto implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 8222253670338491507L;
 
     @Id
     private Integer id_teen;
+    @Column("uuid_teen")
+    private UUID identifier;
     @Column
     private String name;
     @Column("surnamefather")
@@ -44,6 +48,8 @@ public class TeenResponseDto  implements Serializable {
     private Integer id_attorney;
     @Column
     private String codubi;
+    @Column
+    private LocalDateTime date_hour_register;
     @Column
     private String status;
 }

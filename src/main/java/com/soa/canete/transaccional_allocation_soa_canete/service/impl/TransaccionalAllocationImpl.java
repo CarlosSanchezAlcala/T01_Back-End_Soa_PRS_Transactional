@@ -35,14 +35,17 @@ public class TransaccionalAllocationImpl implements TransaccionalAllocationServi
     @Autowired
     public TransaccionalAllocationImpl(TransaccionalAllocationRepository transaccionalAllocationRepository,
                                        TeenAllocationRepository teenAllocationRepository,
-                                       WebClient.Builder webClientBuilder) {
+                                       WebClient.Builder webClientBuilder,
+                                       TeenAllocationRepository teenRepository) {
         this._transaccionalAllocationRepository = transaccionalAllocationRepository;
         this._teenAllocationRepository = teenAllocationRepository;
         this.webClientBuilder = webClientBuilder;
+        this._teenRepository = teenRepository;
     }
 
     private WebClient.Builder webClientBuilder;
 
+    final TeenAllocationRepository _teenRepository;
     final TeenAllocationRepository _teenAllocationRepository;
     final TransaccionalAllocationRepository _transaccionalAllocationRepository;
 
@@ -57,7 +60,7 @@ public class TransaccionalAllocationImpl implements TransaccionalAllocationServi
                     .bodyToMono(FuncionaryResponseDto.class);
             Mono<TeenResponseDto> teenResponseDtoMono = webClientBuilder.build()
                     .get()
-                    .uri("http://localhost:8082/api/teenData/" + dataFamily.getIdTeen())
+                    .uri("http://localhost:8082/api/teenData/listUnique/" + dataFamily.getIdTeen())
                     .retrieve()
                     .bodyToMono(TeenResponseDto.class);
             return funcionaryResponseDtoMono.zipWith(teenResponseDtoMono).map(dataGeneral -> {
@@ -84,7 +87,7 @@ public class TransaccionalAllocationImpl implements TransaccionalAllocationServi
                     .bodyToMono(FuncionaryResponseDto.class);
             Mono<TeenResponseDto> teenResponseDtoMono = webClientBuilder.build()
                     .get()
-                    .uri("http://localhost:8082/api/teenData/" + dataFamily.getIdTeen())
+                    .uri("http://localhost:8082/api/teenData/listUnique/" + dataFamily.getIdTeen())
                     .retrieve()
                     .bodyToMono(TeenResponseDto.class);
             return funcionaryResponseDtoMono.zipWith(teenResponseDtoMono).map(dataGeneral -> {
@@ -139,7 +142,7 @@ public class TransaccionalAllocationImpl implements TransaccionalAllocationServi
                     .bodyToMono(FuncionaryResponseDto.class);
             Mono<TeenResponseDto> teenResponseDtoMono = webClientBuilder.build()
                     .get()
-                    .uri("http://localhost:8082/api/teenData/" + dataFamily.getIdTeen())
+                    .uri("http://localhost:8082/api/teenData/listUnique/" + dataFamily.getIdTeen())
                     .retrieve()
                     .bodyToMono(TeenResponseDto.class);
             return funcionaryResponseDtoMono.zipWith(teenResponseDtoMono).map(dataGeneral -> {
@@ -167,7 +170,7 @@ public class TransaccionalAllocationImpl implements TransaccionalAllocationServi
                     .bodyToMono(FuncionaryResponseDto.class);
             Mono<TeenResponseDto> teenResponseDtoMono = webClientBuilder.build()
                     .get()
-                    .uri("http://localhost:8082/api/teenData/" + dataFamily.getIdTeen())
+                    .uri("http://localhost:8082/api/teenData/listUnique/" + dataFamily.getIdTeen())
                     .retrieve()
                     .bodyToMono(TeenResponseDto.class);
             return funcionaryResponseDtoMono.zipWith(teenResponseDtoMono).map(dataGeneral -> {
@@ -197,14 +200,26 @@ public class TransaccionalAllocationImpl implements TransaccionalAllocationServi
     }
 
     @Override
-    public Mono<TransaccionalAllocationResponseDto> deleteLogicalTransaction(Integer id_funcionaryteend) {
-        return this._transaccionalAllocationRepository.findById(id_funcionaryteend)
-                .map((deleteData) -> {
-                    deleteData.setStatus("I");
-                    return deleteData;
-                })
-                .flatMap(_transaccionalAllocationRepository::save)
-                .map(TransaccionalAllocationMapper::toDto);
+    public Mono<TransaccionalAllocationResponseDto> deleteLogicalTransaction(Integer idTeen) {
+        return this._teenRepository.findById(idTeen)
+                .flatMap((teen) -> {
+                    // Verifica si el estado del teen es "T"
+                    System.out.println("Information Teen: " + teen);
+                    if ("T".equals(teen.getStatus())) {
+                        // Busca la asignación relacionada con el teen
+                        return this._transaccionalAllocationRepository.findByIdTeen(idTeen)
+                                .flatMap((deleteData) -> {
+                                    deleteData.setStatus("I");
+                                    // Guarda la asignación con el nuevo estado
+                                    return _transaccionalAllocationRepository.save(deleteData)
+                                            .map(TransaccionalAllocationMapper::toDto);
+                                });
+                    } else {
+                        // Si el estado del teen no es "T", puedes manejarlo según tus requisitos
+                        return Mono.error(new IllegalStateException("No se puede cambiar el estado de asignación porque el estado del teen no es 'T'."));
+                    }
+                });
+
     }
 
     @Override
@@ -228,7 +243,7 @@ public class TransaccionalAllocationImpl implements TransaccionalAllocationServi
         List<Mono<TransaccionalAllocationResponseDto>> masiv = dto.getTeens().stream()
                 .map((res) -> {
                     TransaccionalAllocationRequestDto transac = TransaccionalAllocationRequestDto.builder()
-                            .id_teen(res.getId_teen())
+                            .idTeen(res.getId_teen())
                             .description(dto.getDescription())
                             .id_funcionary(dto.getId_funcionary())
                             .function_start(dto.getFunction_start())

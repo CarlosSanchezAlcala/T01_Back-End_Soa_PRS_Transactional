@@ -8,6 +8,8 @@ import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Table(name = "teen")
 @Data
@@ -17,6 +19,8 @@ public class Teen {
 
     @Id
     private Integer id_teen;
+    @Column("uuid_teen")
+    private UUID identifier;
     @Column
     private String name;
     @Column("surnamefather")
@@ -44,12 +48,14 @@ public class Teen {
     @Column
     private String codubi;
     @Column
+    private LocalDateTime date_hour_register;
+    @Column
     private String status;
 
-    public Teen(String name, String surnameFather, String surnameMother, String dni, String phoneNumber,
+    public Teen(UUID identifier, String name, String surnameFather, String surnameMother, String dni, String phoneNumber,
                 String address, String email, LocalDate birthade, String gender, Integer id_operativeunit,
-                String crimeCommitted, Integer id_attorney,String codubi,String status)
-    {
+                String crimeCommitted, Integer id_attorney, String codubi, LocalDateTime date_hour_register, String status) {
+        this.identifier = identifier;
         this.name = name;
         this.surnameFather = surnameFather;
         this.surnameMother = surnameMother;
@@ -63,6 +69,7 @@ public class Teen {
         this.crimeCommitted = crimeCommitted;
         this.id_attorney = id_attorney;
         this.codubi = codubi;
+        this.date_hour_register = date_hour_register;
         this.status = status;
     }
 }

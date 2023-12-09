@@ -10,6 +10,7 @@ import org.springframework.data.relational.core.mapping.Table;
 import java.sql.Date;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Table(name = "funcionary_teen")
 @Data
@@ -32,12 +33,12 @@ public class TransaccionalAllocation {
     @Column
     private Integer id_funcionary;
 
-    public TransaccionalAllocation(String description, String status, Integer id_teen, Integer id_funcionary, LocalDateTime date_hour_register, LocalDate function_start) {
+    public TransaccionalAllocation(String description, String status, Integer idTeen, Integer id_funcionary, LocalDateTime date_hour_register, LocalDate function_start) {
         this.description = description;
         this.status = status;
         this.date_hour_register = date_hour_register;
         this.function_start = function_start;
-        this.id_teen = id_teen;
+        this.idTeen = idTeen;
         this.id_funcionary = id_funcionary;
     }
 }
