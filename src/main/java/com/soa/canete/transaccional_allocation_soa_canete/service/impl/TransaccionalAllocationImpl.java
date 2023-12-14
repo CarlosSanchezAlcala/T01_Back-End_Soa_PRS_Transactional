@@ -9,19 +9,30 @@ import com.soa.canete.transaccional_allocation_soa_canete.domain.dto.Transaccion
 import com.soa.canete.transaccional_allocation_soa_canete.domain.mapper.TransaccionalAllocationMapper;
 import com.soa.canete.transaccional_allocation_soa_canete.domain.model.Teen;
 import com.soa.canete.transaccional_allocation_soa_canete.domain.model.TransaccionalAllocation;
+import com.soa.canete.transaccional_allocation_soa_canete.domain.report.AsignationProgramsReportDto;
 import com.soa.canete.transaccional_allocation_soa_canete.exception.ResourceNotFoundException;
 import com.soa.canete.transaccional_allocation_soa_canete.repository.TeenAllocationRepository;
 import com.soa.canete.transaccional_allocation_soa_canete.repository.TransaccionalAllocationRepository;
 import com.soa.canete.transaccional_allocation_soa_canete.service.TransaccionalAllocationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import net.sf.jasperreports.engine.*;
+import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
+import net.sf.jasperreports.engine.util.JRLoader;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.Resource;
+import org.springframework.http.*;
 import org.springframework.stereotype.Service;
+import org.springframework.util.ResourceUtils;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.io.File;
+import java.util.Arrays;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -243,7 +254,7 @@ public class TransaccionalAllocationImpl implements TransaccionalAllocationServi
         List<Mono<TransaccionalAllocationResponseDto>> masiv = dto.getTeens().stream()
                 .map((res) -> {
                     TransaccionalAllocationRequestDto transac = TransaccionalAllocationRequestDto.builder()
-                            .idTeen(res.getId_teen())
+                            .idTeen(Arrays.asList(res.getId_teen()))
                             .description(dto.getDescription())
                             .id_funcionary(dto.getId_funcionary())
                             .function_start(dto.getFunction_start())
@@ -253,4 +264,82 @@ public class TransaccionalAllocationImpl implements TransaccionalAllocationServi
                 }).collect(Collectors.toList());
         return Flux.merge(masiv).then(Mono.empty());
     }
+
+    @Override
+    public Mono<TransaccionalAllocationResponseDto> getDataById(Integer id) {
+        return this._transaccionalAllocationRepository.findById(id)
+                .map(TransaccionalAllocationMapper::toDto);
+    }
+
+    @Override
+    public Flux<AsignationProgramsReportDto> listAsignation() {
+        Flux<TransaccionalAllocation> asignation = _transaccionalAllocationRepository.findAll().sort(Comparator.comparing(TransaccionalAllocation::getId_funcionaryteend).reversed());
+        return asignation.flatMap(dataasugnation -> {
+            Mono<FuncionaryResponseDto> programs = webClientBuilder.build()
+                    .get()
+                    .uri("http://localhost:8081/api/funcionaryData/" + dataasugnation.getId_funcionary())
+                    .retrieve()
+                    .bodyToMono(FuncionaryResponseDto.class);
+
+            Mono<TeenResponseDto> activities = webClientBuilder.build()
+                    .get()
+                    .uri("http://localhost:8082/api/teenData/listUnique/" + dataasugnation.getIdTeen())
+                    .retrieve()
+                    .bodyToMono(TeenResponseDto.class);
+            return programs.zipWith(activities).map(data ->{
+                FuncionaryResponseDto programsDto = data.getT1();
+                TeenResponseDto activitiesDto = data.getT2();
+                AsignationProgramsReportDto asignationProgramsReportDto = new AsignationProgramsReportDto();
+                asignationProgramsReportDto.setId(dataasugnation.getIdTeen());
+                asignationProgramsReportDto.setName_funcionary(programsDto.getName());
+                asignationProgramsReportDto.setName_teen(activitiesDto.getName());
+                asignationProgramsReportDto.setDate_funciont(dataasugnation.getFunction_start());
+                asignationProgramsReportDto.setDescription(dataasugnation.getDescription());
+                return asignationProgramsReportDto;
+            });
+        });
+
+    }
+
+    public Mono<ResponseEntity<Resource>> exportAsignationReport() {
+        Flux<AsignationProgramsReportDto> asignationReportDtoFlux = listAsignation();
+
+        return asignationReportDtoFlux.collectList()
+                .flatMap(asignationReportDtos -> {
+                    try {
+                        final HashMap<String, Object> parameters = new HashMap<>();
+                        parameters.put("dataAsignation", new JRBeanCollectionDataSource(asignationReportDtos));
+                        return Mono.just(jasperReport("transaccional.jasper", "asignationprograms", parameters));
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        return Mono.error(e);
+                    }
+                })
+                .onErrorResume(error -> Mono.just(ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build()));
+    }
+
+    public ResponseEntity<Resource> jasperReport(String reportPath, String outputFileName, HashMap<String, Object> parameters) throws JRException {
+
+        try {
+            final File file = ResourceUtils.getFile("classpath:"+reportPath);
+            final JasperReport report = (JasperReport) JRLoader.loadObject(file);
+
+            JasperPrint jasperPrint = JasperFillManager.fillReport(report, parameters, new JREmptyDataSource());
+            byte[] reporte = JasperExportManager.exportReportToPdf(jasperPrint);
+
+            StringBuilder stringBuilder = new StringBuilder().append("InvoicePDF:");
+            ContentDisposition contentDisposition = ContentDisposition.builder("attachment")
+                    .filename(stringBuilder.append(outputFileName).toString())
+                    .build();
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentDisposition(contentDisposition);
+            return ResponseEntity.ok().contentLength((long) reporte.length)
+                    .contentType(MediaType.APPLICATION_PDF)
+                    .headers(headers).body(new ByteArrayResource(reporte));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
 }

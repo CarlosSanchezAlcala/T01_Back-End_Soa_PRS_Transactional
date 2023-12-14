@@ -1,5 +1,6 @@
 package com.soa.canete.transaccional_allocation_soa_canete.domain.dto.Transaccional;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -9,6 +10,7 @@ import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 @Data
@@ -27,8 +29,12 @@ public class TransaccionalAllocationRequestDto implements Serializable {
     private LocalDateTime date_hour_register;
     @Column
     private LocalDate function_start;
-    @Column("id_teen")
-    private Integer idTeen;
+    @JsonProperty("id_teen")
+    private List<Integer> idTeen;
     @Column
     private Integer id_funcionary;
+
+    public TransaccionalAllocationRequestDto() {
+
+    }
 }

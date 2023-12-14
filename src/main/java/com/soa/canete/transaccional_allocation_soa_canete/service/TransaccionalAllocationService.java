@@ -5,6 +5,7 @@ import com.soa.canete.transaccional_allocation_soa_canete.domain.dto.Teen.MasivT
 import com.soa.canete.transaccional_allocation_soa_canete.domain.dto.Transaccional.TransaccionalAllocationRequestDto;
 import com.soa.canete.transaccional_allocation_soa_canete.domain.dto.Transaccional.TransaccionalAllocationResponseDto;
 import com.soa.canete.transaccional_allocation_soa_canete.domain.model.Teen;
+import com.soa.canete.transaccional_allocation_soa_canete.domain.report.AsignationProgramsReportDto;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -39,4 +40,8 @@ public interface TransaccionalAllocationService {
     Mono<Void> deleteDataCompleteTransaction(Integer id_funcionaryteend);
 
     Mono<Void> updateTeenBulk(MasivTeen dto);
+
+    Flux<AsignationProgramsReportDto> listAsignation();
+
+    Mono<TransaccionalAllocationResponseDto> getDataById(Integer id);
 }

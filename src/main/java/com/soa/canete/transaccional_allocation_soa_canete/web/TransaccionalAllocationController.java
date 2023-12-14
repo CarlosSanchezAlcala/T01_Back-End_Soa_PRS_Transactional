@@ -7,9 +7,12 @@ import com.soa.canete.transaccional_allocation_soa_canete.domain.dto.Transaccion
 import com.soa.canete.transaccional_allocation_soa_canete.domain.model.Teen;
 import com.soa.canete.transaccional_allocation_soa_canete.repository.TransaccionalAllocationRepository;
 import com.soa.canete.transaccional_allocation_soa_canete.service.TransaccionalAllocationService;
+import com.soa.canete.transaccional_allocation_soa_canete.service.impl.TransaccionalAllocationImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -24,6 +27,7 @@ public class TransaccionalAllocationController {
 
     final TransaccionalAllocationRepository transaccionalAllocationRepository;
     final TransaccionalAllocationService transaccionalAllocationService;
+    final TransaccionalAllocationImpl transaccionalAllocation;
 
     @GetMapping("/{idFamilyData}")
     public Mono<DataTeenFuncionaryTransaccional> getTransaccionDataById(@PathVariable Integer idFamilyData) {
@@ -71,9 +75,32 @@ public class TransaccionalAllocationController {
         return this.transaccionalAllocationService.saveNewDataTransaccional(dto);
     }
 
+    private TransaccionalAllocationRequestDto createCopyWithStatusI(TransaccionalAllocationResponseDto originalDto) {
+        TransaccionalAllocationRequestDto copyDto = new TransaccionalAllocationRequestDto();
+        // Copiar todos los campos del original a la copia
+        copyDto.setDescription(originalDto.getDescription());
+        copyDto.setStatus("I"); // Cambiar "status" a "I"
+        copyDto.setDate_hour_register(originalDto.getDate_hour_register());
+        copyDto.setFunction_start(originalDto.getFunction_start());
+        copyDto.setIdTeen(originalDto.getIdTeen ());
+        copyDto.setId_funcionary(originalDto.getId_funcionary());
+
+        return copyDto;
+    }
+
+
+
     @PutMapping("/{id_funcionaryteend}")
     public Mono<TransaccionalAllocationResponseDto> updateDataTransaccional(@RequestBody TransaccionalAllocationRequestDto dto, @PathVariable Integer id_funcionaryteend) {
-        return this.transaccionalAllocationService.updateDataTransaction(dto, id_funcionaryteend);
+        // Obtener los datos originales antes de la actualización
+        return this.transaccionalAllocationService.getDataById(id_funcionaryteend)  // Reemplaza getDataById con el método correcto que obtiene los datos por ID
+                .flatMap(originalData -> {
+                    // Realizar copia con "status" cambiado a "I" antes de la actualización
+                    TransaccionalAllocationRequestDto copyDto = createCopyWithStatusI(originalData);
+                    // Guardar la copia mediante POST
+                    return this.transaccionalAllocationService.saveNewDataTransaccional(copyDto)
+                            .then(this.transaccionalAllocationService.updateDataTransaction(dto, id_funcionaryteend));
+                });
     }
 
     @PatchMapping("/deleteLogical/{idTeen}")
@@ -90,5 +117,8 @@ public class TransaccionalAllocationController {
     public Mono<Void> deleteDataCompleteTransactional(@PathVariable Integer id_funcionaryteend) {
         return this.transaccionalAllocationService.deleteDataCompleteTransaction(id_funcionaryteend);
     }
+
+    @GetMapping("/report")
+    public Mono<ResponseEntity<Resource>> exportAsignationPrograms(){return transaccionalAllocation.exportAsignationReport();}
 
 }
