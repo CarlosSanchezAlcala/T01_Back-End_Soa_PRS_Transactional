@@ -4,6 +4,8 @@ import com.soa.canete.transaccional_allocation_soa_canete.domain.dto.DataTeenFun
 import com.soa.canete.transaccional_allocation_soa_canete.domain.dto.Teen.MasivTeen;
 import com.soa.canete.transaccional_allocation_soa_canete.domain.dto.Transaccional.TransaccionalAllocationRequestDto;
 import com.soa.canete.transaccional_allocation_soa_canete.domain.dto.Transaccional.TransaccionalAllocationResponseDto;
+import com.soa.canete.transaccional_allocation_soa_canete.domain.dto.Transaccional.TransaccionalRequestDto;
+import com.soa.canete.transaccional_allocation_soa_canete.domain.dto.Transaccional.TransaccionalResponseDto;
 import com.soa.canete.transaccional_allocation_soa_canete.domain.model.Teen;
 import com.soa.canete.transaccional_allocation_soa_canete.domain.report.AsignationProgramsReportDto;
 import org.springframework.stereotype.Service;
@@ -29,7 +31,10 @@ public interface TransaccionalAllocationService {
 
     Flux<DataTeenFuncionaryTransaccional> findAllDataInactive();
 
-    Mono<TransaccionalAllocationResponseDto> saveNewDataTransaccional(TransaccionalAllocationRequestDto request);
+    Mono<TransaccionalResponseDto> saveNewDataTransaccional(TransaccionalRequestDto request);
+
+    // Segundo metodo para registrar
+    Mono<TransaccionalAllocationResponseDto> saveNewDataTransaccionals(TransaccionalAllocationRequestDto request);
 
     Mono<TransaccionalAllocationResponseDto> updateDataTransaction(TransaccionalAllocationRequestDto request, Integer id_funcionaryteend);
 

@@ -35,6 +35,5 @@ public class TransaccionalAllocationRequestDto implements Serializable {
     private Integer id_funcionary;
 
     public TransaccionalAllocationRequestDto() {
-
     }
 }

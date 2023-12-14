@@ -4,6 +4,8 @@ import com.soa.canete.transaccional_allocation_soa_canete.domain.dto.DataTeenFun
 import com.soa.canete.transaccional_allocation_soa_canete.domain.dto.Teen.MasivTeen;
 import com.soa.canete.transaccional_allocation_soa_canete.domain.dto.Transaccional.TransaccionalAllocationRequestDto;
 import com.soa.canete.transaccional_allocation_soa_canete.domain.dto.Transaccional.TransaccionalAllocationResponseDto;
+import com.soa.canete.transaccional_allocation_soa_canete.domain.dto.Transaccional.TransaccionalRequestDto;
+import com.soa.canete.transaccional_allocation_soa_canete.domain.dto.Transaccional.TransaccionalResponseDto;
 import com.soa.canete.transaccional_allocation_soa_canete.domain.model.Teen;
 import com.soa.canete.transaccional_allocation_soa_canete.repository.TransaccionalAllocationRepository;
 import com.soa.canete.transaccional_allocation_soa_canete.service.TransaccionalAllocationService;
@@ -71,7 +73,7 @@ public class TransaccionalAllocationController {
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
-    public Mono<TransaccionalAllocationResponseDto> saveNewDataTransaccional(@RequestBody TransaccionalAllocationRequestDto dto) {
+    public Mono<TransaccionalResponseDto> saveNewDataTransaccional(@RequestBody TransaccionalRequestDto dto) {
         return this.transaccionalAllocationService.saveNewDataTransaccional(dto);
     }
 
@@ -88,8 +90,6 @@ public class TransaccionalAllocationController {
         return copyDto;
     }
 
-
-
     @PutMapping("/{id_funcionaryteend}")
     public Mono<TransaccionalAllocationResponseDto> updateDataTransaccional(@RequestBody TransaccionalAllocationRequestDto dto, @PathVariable Integer id_funcionaryteend) {
         // Obtener los datos originales antes de la actualización
@@ -98,7 +98,7 @@ public class TransaccionalAllocationController {
                     // Realizar copia con "status" cambiado a "I" antes de la actualización
                     TransaccionalAllocationRequestDto copyDto = createCopyWithStatusI(originalData);
                     // Guardar la copia mediante POST
-                    return this.transaccionalAllocationService.saveNewDataTransaccional(copyDto)
+                    return this.transaccionalAllocationService.saveNewDataTransaccionals(copyDto)
                             .then(this.transaccionalAllocationService.updateDataTransaction(dto, id_funcionaryteend));
                 });
     }

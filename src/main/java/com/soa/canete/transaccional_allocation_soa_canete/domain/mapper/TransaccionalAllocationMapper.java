@@ -6,7 +6,6 @@ import com.soa.canete.transaccional_allocation_soa_canete.domain.model.Transacci
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
-import java.lang.reflect.Array;
 import java.util.Arrays;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
@@ -16,11 +15,10 @@ public class TransaccionalAllocationMapper {
         return new TransaccionalAllocation(
                 dto.getDescription(),
                 dto.getStatus(),
-                dto.getIdTeen().stream().findFirst().get(),
-                dto.getId_funcionary(),
                 dto.getDate_hour_register(),
-                dto.getFunction_start()
-
+                dto.getFunction_start(),
+                dto.getIdTeen().stream().findFirst().get(),
+                dto.getId_funcionary()
         );
     }
 

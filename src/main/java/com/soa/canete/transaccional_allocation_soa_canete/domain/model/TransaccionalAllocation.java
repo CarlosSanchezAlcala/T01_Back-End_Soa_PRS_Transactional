@@ -33,7 +33,8 @@ public class TransaccionalAllocation {
     @Column
     private Integer id_funcionary;
 
-    public TransaccionalAllocation(String description, String status, Integer idTeen, Integer id_funcionary, LocalDateTime date_hour_register, LocalDate function_start) {
+    public TransaccionalAllocation(String description, String status, LocalDateTime date_hour_register,
+                                   LocalDate function_start, Integer idTeen, Integer id_funcionary) {
         this.description = description;
         this.status = status;
         this.date_hour_register = date_hour_register;

@@ -6,13 +6,17 @@ import com.soa.canete.transaccional_allocation_soa_canete.domain.dto.Teen.MasivT
 import com.soa.canete.transaccional_allocation_soa_canete.domain.dto.Teen.TeenResponseDto;
 import com.soa.canete.transaccional_allocation_soa_canete.domain.dto.Transaccional.TransaccionalAllocationRequestDto;
 import com.soa.canete.transaccional_allocation_soa_canete.domain.dto.Transaccional.TransaccionalAllocationResponseDto;
+import com.soa.canete.transaccional_allocation_soa_canete.domain.dto.Transaccional.TransaccionalRequestDto;
+import com.soa.canete.transaccional_allocation_soa_canete.domain.dto.Transaccional.TransaccionalResponseDto;
 import com.soa.canete.transaccional_allocation_soa_canete.domain.mapper.TransaccionalAllocationMapper;
+import com.soa.canete.transaccional_allocation_soa_canete.domain.mapper.TransaccionalMapper;
 import com.soa.canete.transaccional_allocation_soa_canete.domain.model.Teen;
 import com.soa.canete.transaccional_allocation_soa_canete.domain.model.TransaccionalAllocation;
 import com.soa.canete.transaccional_allocation_soa_canete.domain.report.AsignationProgramsReportDto;
 import com.soa.canete.transaccional_allocation_soa_canete.exception.ResourceNotFoundException;
 import com.soa.canete.transaccional_allocation_soa_canete.repository.TeenAllocationRepository;
 import com.soa.canete.transaccional_allocation_soa_canete.repository.TransaccionalAllocationRepository;
+import com.soa.canete.transaccional_allocation_soa_canete.repository.TransaccionalRepository;
 import com.soa.canete.transaccional_allocation_soa_canete.service.TransaccionalAllocationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -37,6 +41,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static com.soa.canete.transaccional_allocation_soa_canete.domain.mapper.TransaccionalAllocationMapper.toModel;
+import static com.soa.canete.transaccional_allocation_soa_canete.domain.mapper.TransaccionalMapper.toModels;
 
 @Slf4j
 @Service
@@ -45,6 +50,7 @@ public class TransaccionalAllocationImpl implements TransaccionalAllocationServi
 
     @Autowired
     public TransaccionalAllocationImpl(TransaccionalAllocationRepository transaccionalAllocationRepository,
+                                       TransaccionalRepository transaccionalRepository,
                                        TeenAllocationRepository teenAllocationRepository,
                                        WebClient.Builder webClientBuilder,
                                        TeenAllocationRepository teenRepository) {
@@ -52,6 +58,7 @@ public class TransaccionalAllocationImpl implements TransaccionalAllocationServi
         this._teenAllocationRepository = teenAllocationRepository;
         this.webClientBuilder = webClientBuilder;
         this._teenRepository = teenRepository;
+        this._transaccionalRepository = transaccionalRepository;
     }
 
     private WebClient.Builder webClientBuilder;
@@ -59,6 +66,7 @@ public class TransaccionalAllocationImpl implements TransaccionalAllocationServi
     final TeenAllocationRepository _teenRepository;
     final TeenAllocationRepository _teenAllocationRepository;
     final TransaccionalAllocationRepository _transaccionalAllocationRepository;
+    final TransaccionalRepository _transaccionalRepository;
 
     @Override
     public Mono<DataTeenFuncionaryTransaccional> findById(Integer id_funcionaryteend) {
@@ -197,7 +205,13 @@ public class TransaccionalAllocationImpl implements TransaccionalAllocationServi
     }
 
     @Override
-    public Mono<TransaccionalAllocationResponseDto> saveNewDataTransaccional(TransaccionalAllocationRequestDto request) {
+    public Mono<TransaccionalResponseDto> saveNewDataTransaccional(TransaccionalRequestDto request) {
+        return this._transaccionalRepository.save(toModels(request))
+                .map(TransaccionalMapper::toDtos);
+    }
+
+    @Override
+    public Mono<TransaccionalAllocationResponseDto> saveNewDataTransaccionals(TransaccionalAllocationRequestDto request) {
         return this._transaccionalAllocationRepository.save(toModel(request))
                 .map(TransaccionalAllocationMapper::toDto);
     }
@@ -260,7 +274,7 @@ public class TransaccionalAllocationImpl implements TransaccionalAllocationServi
                             .function_start(dto.getFunction_start())
                             .status("A")
                             .build();
-                    return saveNewDataTransaccional(transac);
+                    return saveNewDataTransaccionals(transac);
                 }).collect(Collectors.toList());
         return Flux.merge(masiv).then(Mono.empty());
     }
