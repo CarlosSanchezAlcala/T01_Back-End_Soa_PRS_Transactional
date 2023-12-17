@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 @Data
 @AllArgsConstructor
@@ -15,4 +16,5 @@ public class AsignationProgramsReportDto {
     private String name_funcionary;
     private LocalDate date_funciont;
     private String description;
+
 }
