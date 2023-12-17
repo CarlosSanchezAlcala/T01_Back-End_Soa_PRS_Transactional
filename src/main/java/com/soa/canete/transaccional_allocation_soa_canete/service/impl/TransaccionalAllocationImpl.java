@@ -34,6 +34,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -323,7 +324,7 @@ public class TransaccionalAllocationImpl implements TransaccionalAllocationServi
                     try {
                         final HashMap<String, Object> parameters = new HashMap<>();
                         parameters.put("dataAsignation", new JRBeanCollectionDataSource(asignationReportDtos));
-                        return Mono.just(jasperReport("transaccional.jasper", "asignationprograms", parameters));
+                        return Mono.just(jasperReport("transaccional.jasper", "Asignacion", parameters));
                     } catch (Exception e) {
                         e.printStackTrace();
                         return Mono.error(e);
@@ -335,8 +336,10 @@ public class TransaccionalAllocationImpl implements TransaccionalAllocationServi
     public ResponseEntity<Resource> jasperReport(String reportPath, String outputFileName, HashMap<String, Object> parameters) throws JRException {
 
         try {
-            final File file = ResourceUtils.getFile("classpath:"+reportPath);
+            final File file = ResourceUtils.getFile("classpath:"+ reportPath);
+            final File imgLogo = ResourceUtils.getFile("classpath:images/logo.png");
             final JasperReport report = (JasperReport) JRLoader.loadObject(file);
+            parameters.put("logo", new FileInputStream(imgLogo));
 
             JasperPrint jasperPrint = JasperFillManager.fillReport(report, parameters, new JREmptyDataSource());
             byte[] reporte = JasperExportManager.exportReportToPdf(jasperPrint);
