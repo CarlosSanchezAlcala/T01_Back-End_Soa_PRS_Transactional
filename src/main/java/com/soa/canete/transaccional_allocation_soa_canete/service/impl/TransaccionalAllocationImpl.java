@@ -194,13 +194,13 @@ public class TransaccionalAllocationImpl implements TransaccionalAllocationServi
             Mono<FuncionaryResponseDto> funcionaryResponseDtoMono = webClientBuilder.build()
                     .get()
                     .uri("http://localhost:8080/api/funcionaryData/" + dataFamily.getId_funcionary())
-                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
+                    .header(HttpHeaders.AUTHORIZATION, token)
                     .retrieve()
                     .bodyToMono(FuncionaryResponseDto.class);
             Mono<TeenResponseDto> teenResponseDtoMono = webClientBuilder.build()
                     .get()
                     .uri("http://localhost:8080/api/teenData/listUnique/" + dataFamily.getIdTeen())
-                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
+                    .header(HttpHeaders.AUTHORIZATION, token)
                     .retrieve()
                     .bodyToMono(TeenResponseDto.class);
             return funcionaryResponseDtoMono.zipWith(teenResponseDtoMono).map(dataGeneral -> {
