@@ -22,7 +22,6 @@ import reactor.core.publisher.Mono;
 import java.util.UUID;
 
 @RestController
-@CrossOrigin(origins = "*", allowedHeaders = "*")
 @RequestMapping("/api/transaccionalData")
 @RequiredArgsConstructor
 public class TransaccionalAllocationController {
@@ -32,13 +31,13 @@ public class TransaccionalAllocationController {
     final TransaccionalAllocationImpl transaccionalAllocation;
 
     @GetMapping("/{idFamilyData}")
-    public Mono<DataTeenFuncionaryTransaccional> getTransaccionDataById(@PathVariable Integer idFamilyData) {
-        return this.transaccionalAllocationService.findById(idFamilyData);
+    public Mono<DataTeenFuncionaryTransaccional> getTransaccionDataById(@PathVariable Integer idFamilyData, @RequestHeader("Authorization") String token) {
+        return this.transaccionalAllocationService.findById(idFamilyData, token);
     }
 
     @GetMapping("/listData")
-    public Flux<DataTeenFuncionaryTransaccional> getDataCompleteTransaccional() {
-        return this.transaccionalAllocationService.findAll();
+    public Flux<DataTeenFuncionaryTransaccional> getDataCompleteTransaccional(@RequestHeader("Authorization") String token) {
+        return this.transaccionalAllocationService.findAll(token);
     }
 
     @GetMapping("/listDataIdRegister")
@@ -62,13 +61,13 @@ public class TransaccionalAllocationController {
     }
 
     @GetMapping("/listData/active")
-    public Flux<DataTeenFuncionaryTransaccional> getDataActiveAsignation() {
-        return this.transaccionalAllocationService.findAllDataActive();
+    public Flux<DataTeenFuncionaryTransaccional> getDataActiveAsignation(@RequestHeader("Authorization") String token) {
+        return this.transaccionalAllocationService.findAllDataActive(token);
     }
 
     @GetMapping("/listData/inactive")
-    public Flux<DataTeenFuncionaryTransaccional> getDataInactiveAsignation() {
-        return this.transaccionalAllocationService.findAllDataInactive();
+    public Flux<DataTeenFuncionaryTransaccional> getDataInactiveAsignation(@RequestHeader("Authorization") String token) {
+        return this.transaccionalAllocationService.findAllDataInactive(token);
     }
 
     @ResponseStatus(HttpStatus.CREATED)
@@ -119,6 +118,6 @@ public class TransaccionalAllocationController {
     }
 
     @GetMapping("/report")
-    public Mono<ResponseEntity<Resource>> exportAsignationPrograms(){return transaccionalAllocation.exportAsignationReport();}
+    public Mono<ResponseEntity<Resource>> exportAsignationPrograms(@RequestHeader("Authorization") String token){return transaccionalAllocation.exportAsignationReport(token);}
 
 }

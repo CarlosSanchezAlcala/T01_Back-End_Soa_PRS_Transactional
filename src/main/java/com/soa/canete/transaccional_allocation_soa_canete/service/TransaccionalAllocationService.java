@@ -17,9 +17,9 @@ import java.util.UUID;
 @Service
 public interface TransaccionalAllocationService {
 
-    Mono<DataTeenFuncionaryTransaccional> findById(Integer id_funcionaryteend);
+    Mono<DataTeenFuncionaryTransaccional> findById(Integer id_funcionaryteend, String token);
 
-    Flux<DataTeenFuncionaryTransaccional> findAll();
+    Flux<DataTeenFuncionaryTransaccional> findAll(String token);
 
     Mono<TransaccionalAllocationResponseDto> findByIdTeen(Integer id_teen);
 
@@ -27,9 +27,9 @@ public interface TransaccionalAllocationService {
 
     Flux<Teen> getDataTeenNoRegisterTransactional();
 
-    Flux<DataTeenFuncionaryTransaccional> findAllDataActive();
+    Flux<DataTeenFuncionaryTransaccional> findAllDataActive(String token);
 
-    Flux<DataTeenFuncionaryTransaccional> findAllDataInactive();
+    Flux<DataTeenFuncionaryTransaccional> findAllDataInactive(String token);
 
     Mono<TransaccionalResponseDto> saveNewDataTransaccional(TransaccionalRequestDto request);
 
@@ -46,7 +46,7 @@ public interface TransaccionalAllocationService {
 
     Mono<Void> updateTeenBulk(MasivTeen dto);
 
-    Flux<AsignationProgramsReportDto> listAsignation();
+    Flux<AsignationProgramsReportDto> listAsignation(String token);
 
     Mono<TransaccionalAllocationResponseDto> getDataById(Integer id);
 }
