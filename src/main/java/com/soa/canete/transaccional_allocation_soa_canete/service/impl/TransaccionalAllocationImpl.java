@@ -70,17 +70,20 @@ public class TransaccionalAllocationImpl implements TransaccionalAllocationServi
     final TransaccionalRepository _transaccionalRepository;
 
     @Override
-    public Mono<DataTeenFuncionaryTransaccional> findById(Integer id_funcionaryteend) {
+    public Mono<DataTeenFuncionaryTransaccional> findById(Integer id_funcionaryteend, String token) {
         Mono<TransaccionalAllocation> family = _transaccionalAllocationRepository.findById(id_funcionaryteend);
         return family.flatMap(dataFamily -> {
             Mono<FuncionaryResponseDto> funcionaryResponseDtoMono = webClientBuilder.build()
                     .get()
-                    .uri("http://localhost:8081/api/funcionaryData/" + dataFamily.getId_funcionary())
+                    .uri("http://localhost:8080/api/funcionaryData/" + dataFamily.getId_funcionary())
+                    .header(HttpHeaders.AUTHORIZATION,token)
+                    //.header(HttpHeaders.AUTHORIZATION, "Bearer " + tuTokenDeAcceso)  // Agregar token de acceso
                     .retrieve()
                     .bodyToMono(FuncionaryResponseDto.class);
             Mono<TeenResponseDto> teenResponseDtoMono = webClientBuilder.build()
                     .get()
-                    .uri("http://localhost:8082/api/teenData/listUnique/" + dataFamily.getIdTeen())
+                    .uri("http://localhost:8080/api/teenData/listUnique/" + dataFamily.getIdTeen())
+                    .header(HttpHeaders.AUTHORIZATION,token)
                     .retrieve()
                     .bodyToMono(TeenResponseDto.class);
             return funcionaryResponseDtoMono.zipWith(teenResponseDtoMono).map(dataGeneral -> {
@@ -96,18 +99,20 @@ public class TransaccionalAllocationImpl implements TransaccionalAllocationServi
     }
 
     @Override
-    public Flux<DataTeenFuncionaryTransaccional> findAll() {
+    public Flux<DataTeenFuncionaryTransaccional> findAll(String token) {
         Flux<TransaccionalAllocation> family = _transaccionalAllocationRepository.findAll()
                 .sort(Comparator.comparing(TransaccionalAllocation::getId_funcionaryteend).reversed());
         return family.flatMap(dataFamily -> {
             Mono<FuncionaryResponseDto> funcionaryResponseDtoMono = webClientBuilder.build()
                     .get()
-                    .uri("http://localhost:8081/api/funcionaryData/" + dataFamily.getId_funcionary())
+                    .uri("http://localhost:8080/api/funcionaryData/" + dataFamily.getId_funcionary())
+                    .header(HttpHeaders.AUTHORIZATION, token)
                     .retrieve()
                     .bodyToMono(FuncionaryResponseDto.class);
             Mono<TeenResponseDto> teenResponseDtoMono = webClientBuilder.build()
                     .get()
-                    .uri("http://localhost:8082/api/teenData/listUnique/" + dataFamily.getIdTeen())
+                    .uri("http://localhost:8080/api/teenData/listUnique/" + dataFamily.getIdTeen())
+                    .header(HttpHeaders.AUTHORIZATION, token)
                     .retrieve()
                     .bodyToMono(TeenResponseDto.class);
             return funcionaryResponseDtoMono.zipWith(teenResponseDtoMono).map(dataGeneral -> {
@@ -150,19 +155,22 @@ public class TransaccionalAllocationImpl implements TransaccionalAllocationServi
     }
 
     @Override
-    public Flux<DataTeenFuncionaryTransaccional> findAllDataActive() {
+    public Flux<DataTeenFuncionaryTransaccional> findAllDataActive(String token) {
+        System.out.println("Token: " + token);
         Flux<TransaccionalAllocation> family = _transaccionalAllocationRepository.findAll()
                 .sort(Comparator.comparing(TransaccionalAllocation::getId_funcionaryteend).reversed())
                 .filter((active) -> active.getStatus().equals("A"));
         return family.flatMap(dataFamily -> {
             Mono<FuncionaryResponseDto> funcionaryResponseDtoMono = webClientBuilder.build()
                     .get()
-                    .uri("http://localhost:8081/api/funcionaryData/" + dataFamily.getId_funcionary())
+                    .uri("http://localhost:8080/api/funcionaryData/" + dataFamily.getId_funcionary())
+                    .header(HttpHeaders.AUTHORIZATION, token)
                     .retrieve()
                     .bodyToMono(FuncionaryResponseDto.class);
             Mono<TeenResponseDto> teenResponseDtoMono = webClientBuilder.build()
                     .get()
-                    .uri("http://localhost:8082/api/teenData/listUnique/" + dataFamily.getIdTeen())
+                    .uri("http://localhost:8080/api/teenData/listUnique/" + dataFamily.getIdTeen())
+                    .header(HttpHeaders.AUTHORIZATION, token)
                     .retrieve()
                     .bodyToMono(TeenResponseDto.class);
             return funcionaryResponseDtoMono.zipWith(teenResponseDtoMono).map(dataGeneral -> {
@@ -178,19 +186,21 @@ public class TransaccionalAllocationImpl implements TransaccionalAllocationServi
     }
 
     @Override
-    public Flux<DataTeenFuncionaryTransaccional> findAllDataInactive() {
+    public Flux<DataTeenFuncionaryTransaccional> findAllDataInactive(String token) {
         Flux<TransaccionalAllocation> family = _transaccionalAllocationRepository.findAll()
                 .sort(Comparator.comparing(TransaccionalAllocation::getId_funcionaryteend).reversed())
                 .filter((active) -> active.getStatus().equals("I"));
         return family.flatMap(dataFamily -> {
             Mono<FuncionaryResponseDto> funcionaryResponseDtoMono = webClientBuilder.build()
                     .get()
-                    .uri("http://localhost:8081/api/funcionaryData/" + dataFamily.getId_funcionary())
+                    .uri("http://localhost:8080/api/funcionaryData/" + dataFamily.getId_funcionary())
+                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
                     .retrieve()
                     .bodyToMono(FuncionaryResponseDto.class);
             Mono<TeenResponseDto> teenResponseDtoMono = webClientBuilder.build()
                     .get()
-                    .uri("http://localhost:8082/api/teenData/listUnique/" + dataFamily.getIdTeen())
+                    .uri("http://localhost:8080/api/teenData/listUnique/" + dataFamily.getIdTeen())
+                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
                     .retrieve()
                     .bodyToMono(TeenResponseDto.class);
             return funcionaryResponseDtoMono.zipWith(teenResponseDtoMono).map(dataGeneral -> {
@@ -287,18 +297,20 @@ public class TransaccionalAllocationImpl implements TransaccionalAllocationServi
     }
 
     @Override
-    public Flux<AsignationProgramsReportDto> listAsignation() {
+    public Flux<AsignationProgramsReportDto> listAsignation(String token) {
         Flux<TransaccionalAllocation> asignation = _transaccionalAllocationRepository.findAll().sort(Comparator.comparing(TransaccionalAllocation::getId_funcionaryteend).reversed());
         return asignation.flatMap(dataasugnation -> {
             Mono<FuncionaryResponseDto> programs = webClientBuilder.build()
                     .get()
-                    .uri("http://localhost:8081/api/funcionaryData/" + dataasugnation.getId_funcionary())
+                    .uri("http://localhost:8080/api/funcionaryData/" + dataasugnation.getId_funcionary())
+                    .header(HttpHeaders.AUTHORIZATION, token)
                     .retrieve()
                     .bodyToMono(FuncionaryResponseDto.class);
 
             Mono<TeenResponseDto> activities = webClientBuilder.build()
                     .get()
-                    .uri("http://localhost:8082/api/teenData/listUnique/" + dataasugnation.getIdTeen())
+                    .uri("http://localhost:8080/api/teenData/listUnique/" + dataasugnation.getIdTeen())
+                    .header(HttpHeaders.AUTHORIZATION, token)
                     .retrieve()
                     .bodyToMono(TeenResponseDto.class);
             return programs.zipWith(activities).map(data ->{
@@ -316,8 +328,8 @@ public class TransaccionalAllocationImpl implements TransaccionalAllocationServi
 
     }
 
-    public Mono<ResponseEntity<Resource>> exportAsignationReport() {
-        Flux<AsignationProgramsReportDto> asignationReportDtoFlux = listAsignation();
+    public Mono<ResponseEntity<Resource>> exportAsignationReport(String token) {
+        Flux<AsignationProgramsReportDto> asignationReportDtoFlux = listAsignation(token);
 
         return asignationReportDtoFlux.collectList()
                 .flatMap(asignationReportDtos -> {
